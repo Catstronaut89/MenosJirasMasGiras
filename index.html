@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Encuesta de Festivales</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 60vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>1. Votos Totales por Festival</h2>
+        <div class="chart-wrapper">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>2. Relación: Votos vs. Compromiso de Asistencia</h2>
+        <div class="chart-wrapper">
+            <canvas id="scatterChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Datos procesados desde el archivo Excel
+        const festivalData = [
+            { nombre: "Quedada sin festival", votos: 35, compromiso: 3.74 },
+            { nombre: "Festival en Luquecidos 2026", votos: 15, compromiso: 3.93 },
+            { nombre: "Festial!", votos: 13, compromiso: 4.31 },
+            { nombre: "17º Ribeira Sacra", votos: 13, compromiso: 3.77 },
+            { nombre: "Canela Party", votos: 12, compromiso: 4.00 },
+            { nombre: "Z! Live Rock Fest", votos: 11, compromiso: 4.27 },
+            { nombre: "Millo Verde", votos: 9, compromiso: 4.22 },
+            { nombre: "Low Festival", votos: 9, compromiso: 4.00 },
+            { nombre: "The Juergas Fest", votos: 8, compromiso: 4.38 },
+            { nombre: "Aupa Lumbreiras!!", votos: 8, compromiso: 4.00 },
+            { nombre: "Etnosur", votos: 8, compromiso: 3.88 },
+            { nombre: "Azkena Rock Festival", votos: 7, compromiso: 4.29 },
+            { nombre: "Blues Cazorla 2026", votos: 7, compromiso: 4.29 },
+            { nombre: "Iruña Rock 2026", votos: 6, compromiso: 4.50 },
+            { nombre: "VDB Rock", votos: 6, compromiso: 4.33 },
+            { nombre: "Alterna Festival", votos: 5, compromiso: 4.00 },
+            { nombre: "Barcelona Rock Fest", votos: 4, compromiso: 5.00 },
+            { nombre: "Rabolagartija", votos: 3, compromiso: 4.33 },
+            { nombre: "KDD Estilo Cercedilla", votos: 1, compromiso: 5.00 },
+            { nombre: "Atlantic Fest", votos: 1, compromiso: 4.00 },
+            { nombre: "Prefiero quedada sin festival", votos: 1, compromiso: 3.00 }
+        ];
+
+        // 1. Configuración Gráfico de Barras (Horizontal)
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: festivalData.map(d => d.nombre),
+                datasets: [{
+                    label: 'Número de Votos',
+                    data: festivalData.map(d => d.votos),
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Lo convierte en horizontal
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 13 },
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Número de Votos', font: { weight: 'bold' } }
+                    },
+                    y: {
+                        ticks: { autoSkip: false } // Para que muestre todos los nombres
+                    }
+                }
+            }
+        });
+
+        // 2. Configuración Scatterplot (Votos vs Compromiso)
+        const scatterData = festivalData.map(d => ({
+            x: d.votos,
+            y: d.compromiso,
+            label: d.nombre
+        }));
+
+        const ctxScatter = document.getElementById('scatterChart').getContext('2d');
+        new Chart(ctxScatter, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Festivales',
+                    data: scatterData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: '#2980b9',
+                    borderWidth: 1,
+                    pointRadius: 7,
+                    pointHoverRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const punto = context.raw;
+                                return [
+                                    punto.label,
+                                    `Votos: ${punto.x}`,
+                                    `Compromiso Medio: ${punto.y.toFixed(2)} / 5.00`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Número de Votos', font: { weight: 'bold' } },
+                        beginAtZero: true
+                    },
+                    y: {
+                        title: { display: true, text: 'Compromiso Promedio (Escala 1 - 5)', font: { weight: 'bold' } },
+                        min: 1,
+                        max: 5.2 // Un poco de margen superior para que no se corte el punto de 5.0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
