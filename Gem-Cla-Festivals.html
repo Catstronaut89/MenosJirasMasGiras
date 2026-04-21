@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados Encuesta Festivales 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .kpi-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-left: 4px solid #00e599;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+
+        .kpi-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00e599;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section h2 {
+            color: #f8fafc;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #334155;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin-bottom: 2rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .chart-container.scatter {
+            height: 450px;
+        }
+
+        .footer {
+            background: #0f172a;
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+            border-top: 1px solid #334155;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .content {
+                padding: 1.5rem;
+            }
+            .chart-container {
+                height: 400px;
+            }
+            .kpi-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .kpi-box {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Resultados de la Encuesta de Festivales</h1>
+            <p>Análisis de preferencias y compromiso</p>
+
+            <div class="kpi-container">
+                <div class="kpi-box">
+                    <div class="kpi-title">Participantes Totales</div>
+                    <div class="kpi-value">44</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-title">Compromiso Promedio</div>
+                    <div class="kpi-value">3.61</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>Votos por Festival</h2>
+                <div class="chart-container">
+                    <canvas id="barsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Análisis: Votos vs Compromiso</h2>
+                <div class="chart-container scatter">
+                    <canvas id="scatterChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Encuesta de Festivales 2026</strong></p>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: #64748b;">Análisis de datos de 44 encuestados</p>
+        </div>
+    </div>
+
+    <script>
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = '#334155';
+
+        const festivalData = [
+            { nombre: "Quedada sin festival", votos: 35, compromiso: 3.74 },
+            { nombre: "Festival en Luquecidos 2026", votos: 15, compromiso: 3.93 },
+            { nombre: "Festial!", votos: 13, compromiso: 4.31 },
+            { nombre: "17º Ribeira Sacra", votos: 13, compromiso: 3.77 },
+            { nombre: "Canela Party", votos: 12, compromiso: 4.00 },
+            { nombre: "Z! Live Rock Fest", votos: 11, compromiso: 4.27 },
+            { nombre: "Millo Verde", votos: 9, compromiso: 4.22 },
+            { nombre: "Low Festival", votos: 9, compromiso: 4.00 },
+            { nombre: "The Juergas Fest", votos: 8, compromiso: 4.38 },
+            { nombre: "Aupa Lumbreiras!!", votos: 8, compromiso: 4.00 },
+            { nombre: "Etnosur", votos: 8, compromiso: 3.88 },
+            { nombre: "Azkena Rock Festival", votos: 7, compromiso: 4.29 },
+            { nombre: "Blues Cazorla 2026", votos: 7, compromiso: 4.29 },
+            { nombre: "Iruña Rock 2026", votos: 6, compromiso: 4.50 },
+            { nombre: "VDB Rock", votos: 6, compromiso: 4.33 },
+            { nombre: "Alterna Festival", votos: 5, compromiso: 4.00 },
+            { nombre: "Barcelona Rock Fest", votos: 4, compromiso: 5.00 }
+        ];
+
+        const mainColor = '#00e599';
+        const mainColorHover = '#33ebad';
+
+        // Gráfico de barras
+        const ctxBars = document.getElementById('barsChart').getContext('2d');
+        new Chart(ctxBars, {
+            type: 'bar',
+            data: {
+                labels: festivalData.map(d => d.nombre),
+                datasets: [{
+                    label: 'Votos',
+                    data: festivalData.map(d => d.votos),
+                    backgroundColor: mainColor,
+                    hoverBackgroundColor: mainColorHover,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) { return ` ${context.parsed.x} votos`; }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: '#1e293b' }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Gráfico scatter
+        const scatterData = festivalData.map(d => ({ x: d.votos, y: d.compromiso, label: d.nombre }));
+        const ctxScatter = document.getElementById('scatterChart').getContext('2d');
+
+        new Chart(ctxScatter, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Festivales',
+                    data: scatterData,
+                    backgroundColor: mainColor,
+                    borderColor: '#ffffff',
+                    borderWidth: 1,
+                    pointRadius: 6,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: mainColorHover
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const punto = context.raw;
+                                return [
+                                    punto.label,
+                                    `Votos: ${punto.x}`,
+                                    `Compromiso: ${punto.y.toFixed(2)}/5`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Número de votos', color: '#f8fafc' },
+                        grid: { color: '#1e293b' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Compromiso promedio (1-5)', color: '#f8fafc' },
+                        min: 3.5,
+                        max: 5.1,
+                        grid: { color: '#1e293b' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
